@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.jd.domain.Order;
 import com.jd.domain.Product;
 import com.jd.service.OrderService;
+import com.jd.service.ProductService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
@@ -29,15 +30,21 @@ public class OrderController {
     @Autowired
     private DiscoveryClient discoveryClient;
 
+    @Autowired
+    private ProductService productService;
+
+    /**
+     * 基于Feign实现服务调用
+     * http://localhost:8091/order/prod/1
+     * @param productId
+     * @return
+     */
     @GetMapping("/order/prod/{productId}")
     public Order order(@PathVariable("productId") Long productId) {
         log.info(">>客户下单，这时候要调用商品微服务查询商品信息");
 
-        String url = "service-product";
-
         //通过restTemplate调用商品微服务
-        Product product = restTemplate.getForObject(
-                "http://" + url + "/product/" + productId, Product.class);
+        Product product = productService.findByPid(productId);
 
         log.info(">>商品信息,查询结果:" + JSON.toJSONString(product));
         Order order = new Order();
@@ -51,7 +58,33 @@ public class OrderController {
         return order;
     }
 
-
+    /**
+     * Ribbon的负载均衡
+     *
+     * @param productId
+     * @return
+     */
+//    @GetMapping("/order/prod/{productId}")
+//    public Order order(@PathVariable("productId") Long productId) {
+//        log.info(">>客户下单，这时候要调用商品微服务查询商品信息");
+//
+//        String url = "service-product";
+//
+//        //通过restTemplate调用商品微服务
+//        Product product = restTemplate.getForObject(
+//                "http://" + url + "/product/" + productId, Product.class);
+//
+//        log.info(">>商品信息,查询结果:" + JSON.toJSONString(product));
+//        Order order = new Order();
+//        order.setUserId(1L);
+//        order.setUsername("测试用户");
+//        order.setProductId(product.getId());
+//        order.setProductName(product.getName());
+//        order.setProductPrice(product.getPrice());
+//        order.setNumber(1);
+//        orderService.save(order);
+//        return order;
+//    }
 
 
     /**
@@ -85,8 +118,6 @@ public class OrderController {
 //        orderService.save(order);
 //        return order;
 //    }
-
-
 
 
     /**
