@@ -16,7 +16,11 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
-
+    /**
+     * http://localhost:8081/product/1
+     * @param id
+     * @return
+     */
     @GetMapping("/product/{id}")
     public Product product(@PathVariable("id") Long id){
         Product product = productService.findById(id);

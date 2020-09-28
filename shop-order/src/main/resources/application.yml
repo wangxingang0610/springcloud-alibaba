@@ -1,5 +1,7 @@
 server:
   port: 8091
+#  tomcat:
+#    max-threads: 10 #tomcat的最大并发值修改为10,默认是200
 spring:
   application:
     name: service-order
@@ -15,12 +17,12 @@ spring:
           auto: update
         dialect: org.hibernate.dialect.MySQL5InnoDBDialect
 
-  cloud:
-    nacos:
-      discovery:
-        server-addr: 127.0.0.1:8848
+#  cloud:
+#    nacos:
+#      discovery:
+#        server-addr: 127.0.0.1:8848
 
-service-product: # 调用的提供者的名称
-  ribbon:
-    NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule
+#service-product: # 调用的提供者的名称
+#  ribbon:
+#    NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule
 
