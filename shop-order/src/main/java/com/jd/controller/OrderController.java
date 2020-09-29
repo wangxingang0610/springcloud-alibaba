@@ -21,7 +21,7 @@ import java.util.Random;
  * http://localhost:8091/order/prod/1
  *
  */
-@RestController
+//@RestController
 @Slf4j
 public class OrderController {
 
