@@ -88,40 +88,7 @@ public class OrderController {
 
 
     /**
-     * 负载均衡
-     * @param productId
-     * @return
-     */
-//    @GetMapping("/order/prod/{productId}")
-//    public Order order(@PathVariable("productId") Long productId) {
-//        log.info(">>客户下单，这时候要调用商品微服务查询商品信息");
-//
-//
-//        //从nacos中获取服务地址
-//        List<ServiceInstance> instanceList = discoveryClient.getInstances("service-product");
-//        int index = new Random().nextInt(instanceList.size());
-//        ServiceInstance serviceInstance = instanceList.get(index);
-//        String url = serviceInstance.getHost() + ":" + serviceInstance.getPort();
-//
-//        //通过restTemplate调用商品微服务
-//        Product product = restTemplate.getForObject(
-//                "http://" + url + "/product/" + productId, Product.class);
-//
-//        log.info(">>商品信息,查询结果:" + JSON.toJSONString(product));
-//        Order order = new Order();
-//        order.setUserId(1L);
-//        order.setUsername("测试用户");
-//        order.setProductId(product.getId());
-//        order.setProductName(product.getName());
-//        order.setProductPrice(product.getPrice());
-//        order.setNumber(1);
-//        orderService.save(order);
-//        return order;
-//    }
-
-
-    /**
-     * 从nacos中获取服务地址
+     * 自定义实现负载均衡
      * @param productId
      * @return
      */
@@ -131,10 +98,12 @@ public class OrderController {
 
 
         //从nacos中获取服务地址
-        ServiceInstance serviceInstance = discoveryClient.getInstances("service-product").get(0);
+        List<ServiceInstance> instanceList = discoveryClient.getInstances("service-product");
+        int index = new Random().nextInt(instanceList.size());
+        log.info("index:{}", index);
+        ServiceInstance serviceInstance = instanceList.get(index);
         String url = serviceInstance.getHost() + ":" + serviceInstance.getPort();
-
-
+        log.info("url:{}", url);
 
         //通过restTemplate调用商品微服务
         Product product = restTemplate.getForObject(
@@ -151,6 +120,39 @@ public class OrderController {
         orderService.save(order);
         return order;
     }
+
+
+    /**
+     * 从nacos中获取服务地址
+     * @param productId
+     * @return
+     */
+//    @GetMapping("/order/prod/{productId}")
+//    public Order order(@PathVariable("productId") Long productId) {
+//        log.info(">>客户下单，这时候要调用商品微服务查询商品信息");
+//
+//
+//        //从nacos中获取服务地址
+//        ServiceInstance serviceInstance = discoveryClient.getInstances("service-product").get(0);
+//        String url = serviceInstance.getHost() + ":" + serviceInstance.getPort();
+//
+//
+//
+//        //通过restTemplate调用商品微服务
+//        Product product = restTemplate.getForObject(
+//                "http://" + url + "/product/" + productId, Product.class);
+//
+//        log.info(">>商品信息,查询结果:" + JSON.toJSONString(product));
+//        Order order = new Order();
+//        order.setUserId(1L);
+//        order.setUsername("测试用户");
+//        order.setProductId(product.getId());
+//        order.setProductName(product.getName());
+//        order.setProductPrice(product.getPrice());
+//        order.setNumber(1);
+//        orderService.save(order);
+//        return order;
+//    }
 
     /**
      * http://localhost:8091/order/prod/1
